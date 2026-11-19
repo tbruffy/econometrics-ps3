@@ -1,0 +1,91 @@
+\section{A random walk with drift}
+\subsection*{(a) Factorization of the conditional density}
+With $x_0=0$ fixed, the conditional-density identity gives
+\[
+f(x_1,\ldots,x_T\mid x_0)=
+f(x_T\mid x_{T-1},\ldots,x_0)
+f(x_1,\ldots,x_{T-1}\mid x_0).
+\]
+Iterating proves, for every integer $T\geq1$,
+\[
+\boxed{f(x_1,\ldots,x_T\mid x_0)
+=\prod_{t=1}^{T}f(x_t\mid x_{t-1},\ldots,x_0).}
+\]
+Independent innovations also give the Markov property:
+$x_t\mid(x_{t-1},\ldots,x_0)\sim N(\delta+x_{t-1},\sigma^2)$.
+
+\subsection*{(b) Maximum likelihood estimation}
+Let $d_t=x_t-x_{t-1}$. Conditional on $x_0=0$, these increments are
+independent $N(\delta,\sigma^2)$ variables, so
+\[
+\ell(\delta,\sigma^2)
+=-\frac T2\log(2\pi)-\frac T2\log\sigma^2
+-\frac1{2\sigma^2}\sum_{t=1}^T(d_t-\delta)^2.
+\]
+The first-order condition for $\delta$ gives
+\[
+\boxed{\widehat\delta_{\mathrm{ML}}
+=\frac1T\sum_{t=1}^Td_t=\frac{x_T}{T}.}
+\]
+Substituting into the likelihood and differentiating with respect to
+$\sigma^2$ gives
+\[
+\boxed{\widehat{\sigma^2}_{\mathrm{ML}}
+=\frac1T\sum_{t=1}^T(d_t-\widehat\delta_{\mathrm{ML}})^2.}
+\]
+The divisor is $T$, not $T-1$. For $T>1$ these are the interior
+maximizers almost surely. For $T=1$, the formal boundary variance
+estimate is zero; if $\sigma^2>0$ is required, the likelihood is
+unbounded as $\delta=x_1$ and $\sigma^2\downarrow0$, so no interior
+variance MLE exists.
+
+\subsection*{(c) Information bound when $\sigma^2=1$}
+The score and Fisher information for $\delta$ are
+\[
+\frac{\partial\ell}{\partial\delta}=\sum_{t=1}^T(d_t-\delta),
+\qquad
+\mathcal I_T(\delta)
+=-E\left[\frac{\partial^2\ell}{\partial\delta^2}\right]=T.
+\]
+The Cram\'er--Rao bound for an unbiased estimator is therefore $1/T$.
+Moreover,
+$\widehat\delta_{\mathrm{ML}}\sim N(\delta,1/T)$,
+so the estimator in (b) is unbiased and attains the bound.
+
+\input{sections/problem3_empirical}
+
+\subsection*{(e) Regression on a random walk}
+Conditional on the entire regressor vector $X=(x_1,\ldots,x_T)'$,
+independence of the errors and the random walk gives
+\[
+E[\varepsilon\mid X]=0,\qquad
+\operatorname{Var}(\varepsilon\mid X)=\gamma^2I_T.
+\]
+With an intercept, the design matrix has full column rank almost surely
+for $T\geq2$, provided $\sigma^2>0$. Thus the model satisfies the
+\emph{conditional} Gauss--Markov assumptions. Serial dependence of
+the regressors does not invalidate these conditions.
+
+The pairs $(y_t,x_t)$ are not i.i.d. Indeed,
+\[
+E[x_t]=t\delta,\qquad
+\operatorname{Var}(x_t)=t\sigma^2,\qquad
+\operatorname{Cov}(x_s,x_t)=\sigma^2\min(s,t).
+\]
+The distribution of $x_t$ changes with $t$, and the regressors are
+serially dependent.
+
+For a two-sided test of $H_0:\beta=1$ with unknown $\gamma^2$,
+fit the model by OLS and compute
+\[
+t_{\mathrm{obs}}=
+\frac{\widehat\beta-1}{s/\sqrt{\sum_{t=1}^T(x_t-\bar x)^2}},
+\qquad
+s^2=\frac{\sum_{t=1}^T
+(y_t-\widehat\alpha-\widehat\beta x_t)^2}{T-2}.
+\]
+Conditional normality implies the exact null distribution
+$t_{\mathrm{obs}}\mid X\sim t_{T-2}$. Since this distribution does not
+depend on $X$, it also holds unconditionally.
+For $T=3$, use $t_1$; at the two-sided $5\%$ level reject if
+$|t_{\mathrm{obs}}|>12.706$.

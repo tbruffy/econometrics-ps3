@@ -1,0 +1,42 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=0.9in]{geometry}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs,graphicx,float}
+\usepackage{microtype,enumitem,etoolbox}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{xcolor,fancyhdr}
+\usepackage[colorlinks=true,linkcolor=blue!45!black,urlcolor=blue!45!black]{hyperref}
+\input{config}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\setlength{\headheight}{14pt}
+\setlist{nosep}
+\allowdisplaybreaks
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Econometrics I \quad Problem Set 3}
+\fancyhead[R]{\SubmissionName}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\begin{document}
+\begin{center}
+{\LARGE\bfseries Problem Set 3}\\[6pt]
+{\large Econometrics I}\\[5pt]
+\SubmissionName\\[5pt]
+\ifdefempty{\RepositoryURL}
+{\textit{GitHub repository link: add the URL in config.tex before submission.}}
+{\href{\RepositoryURL}{GitHub repository: code, data and reproducible results}}
+\end{center}
+\vspace{4pt}
+\input{sections/problem1}
+\clearpage
+\input{sections/problem2}
+\clearpage
+\input{sections/problem3}
+\clearpage
+\input{sections/problem4}
+\clearpage
+\input{sections/problem5}
+\end{document}

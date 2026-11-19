@@ -1,0 +1,21 @@
+\clearpage
+\subsection*{(d) S\&P 500 monthly index data}
+The workbook contains 702 month-end index levels, January 1960--June 2018.
+Set $x_0=0$ in January 1960 and
+$x_t=\log(SP_t/SP_0)$. This produces $T=701$ increments:
+\[
+d_t=x_t-x_{t-1}=\log(SP_t/SP_{t-1}).
+\]
+Applying the formulas in (b),
+\[
+\boxed{\begin{aligned}\widehat\delta_{\mathrm{ML}}&=0.0055483947,\\
+\widehat{\sigma^2}_{\mathrm{ML}}&=0.0017791816,\\
+\sqrt{\widehat{\sigma^2}_{\mathrm{ML}}}&=0.0421803461.\end{aligned}}
+\]
+The fitted average monthly log price growth is approximately $0.555\%$,
+and the monthly innovation standard deviation is approximately $4.218\%$.
+The corresponding fitted geometric annual price-growth rate is
+$\exp(12\widehat\delta)-1\approx6.885\%$.
+These are price-index results: dividends are excluded.
+They describe the fitted constant-drift Gaussian model, without
+establishing that its independence or normality assumptions hold.

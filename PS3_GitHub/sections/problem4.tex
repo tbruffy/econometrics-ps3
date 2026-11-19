@@ -1,0 +1,105 @@
+\section{Poisson likelihood under misspecification}
+Write $n$ for the sample size in the asymptotic arguments;
+the stated sample has $n=1000$.
+
+\subsection*{(a) Correctly specified Poisson model}
+The log likelihood is
+\[
+\ell_n(\lambda)=-n\lambda+
+\left(\sum_{i=1}^ny_i\right)\log\lambda-\sum_{i=1}^n\log(y_i!).
+\]
+Setting its derivative to zero and using invariance of maximum
+likelihood gives
+\[
+\boxed{\widehat\lambda_{\mathrm{ML}}=\bar y,\qquad
+\widehat P_0=e^{-\bar y}.}
+\]
+For an interior value $\lambda>0$,
+$\sqrt n(\bar y-\lambda)\xrightarrow{d}N(0,\lambda)$.
+The delta method, with $h'(\lambda)=-e^{-\lambda}$, then gives
+\[
+\boxed{\sqrt n(\widehat P_0-e^{-\lambda})
+\xrightarrow{d}N(0,\lambda e^{-2\lambda}).}
+\]
+For $n=1000$, the approximate variance of $\widehat P_0$ is
+$\lambda e^{-2\lambda}/1000$, consistently estimated by
+$\bar y e^{-2\bar y}/1000$. If all observations equal zero, the MLE
+is the boundary value $\widehat\lambda=0$ when this is included
+in the parameter space.
+
+\subsection*{(b) Negative binomial data}
+For a proper nondegenerate $NB(r,p)$ distribution, take $r\geq1$
+and $0<p<1$. Its mean and variance are
+\[
+\mu=\frac{r(1-p)}p,\qquad v=\frac{r(1-p)}{p^2}.
+\]
+The law of large numbers and continuous mapping theorem imply
+\[
+\boxed{\widehat\lambda_{\mathrm{ML}}\xrightarrow{p}
+\lambda^*=\frac{r(1-p)}p,\qquad
+\widehat P_0\xrightarrow{p}
+\exp\left[-\frac{r(1-p)}p\right].}
+\]
+The actual zero probability is $P_0=p^r$.
+For $0<p<1$,
+\[
+\log p>-\frac{1-p}{p}
+\quad\Longrightarrow\quad
+\exp\left[-\frac{r(1-p)}p\right]<p^r.
+\]
+Thus the fitted Poisson model asymptotically understates the zero
+probability. At $p=1$, both distributions degenerate at zero and both
+zero probabilities equal one. The endpoint $p=0$ does not define a
+proper finite-valued distribution with the pmf in the question.
+
+\clearpage
+\subsection*{(c) Kullback--Leibler minimizing parameter}
+Collecting all terms that do not depend on $\lambda$ in a constant $K$,
+\[
+d(g_{r,p},f_\lambda)=K+\lambda-\mu\log\lambda.
+\]
+For $0<p<1$,
+\[
+\frac{\partial d}{\partial\lambda}=1-\frac\mu\lambda,\qquad
+\frac{\partial^2d}{\partial\lambda^2}=\frac\mu{\lambda^2}>0.
+\]
+Hence the unique minimizing value is
+\[
+\boxed{\lambda^*=\mu=\frac{r(1-p)}p.}
+\]
+This equals the probability limit in (b). The misspecified MLE
+selects the Poisson distribution closest to the true distribution
+in Kullback--Leibler divergence. Matching its mean does not ensure
+that its zero probability or variance is correct.
+
+\subsection*{(d) Failure of the information identity}
+For one observation, the Poisson score and Hessian are
+\[
+s_\lambda(y)=\frac{\partial\log f_\lambda(y)}{\partial\lambda}
+=\frac y\lambda-1,\qquad
+\frac{\partial^2\log f_\lambda(y)}{\partial\lambda^2}
+=-\frac y{\lambda^2}.
+\]
+Under the true negative binomial distribution,
+\[
+J(\lambda)=\operatorname{Var}_{g_{r,p}}\{s_\lambda(y)\}
+=\frac{r(1-p)}{p^2\lambda^2},\qquad
+H(\lambda)=-E_{g_{r,p}}\left[
+\frac{\partial^2\log f_\lambda(y)}{\partial\lambda^2}\right]
+=\frac{r(1-p)}{p\lambda^2}.
+\]
+Thus $J(\lambda)=H(\lambda)/p>H(\lambda)$ for $0<p<1$:
+the information equality fails.
+At $\lambda^*=\mu$,
+\[
+J(\lambda^*)=\frac1{r(1-p)},\qquad
+H(\lambda^*)=\frac p{r(1-p)}.
+\]
+The sandwich asymptotic variance of
+$\sqrt n(\widehat\lambda-\lambda^*)$ is
+\[
+H(\lambda^*)^{-1}J(\lambda^*)H(\lambda^*)^{-1}
+=\frac{r(1-p)}{p^2}=v.
+\]
+The inverse Hessian alone gives $H(\lambda^*)^{-1}=\mu=pv$,
+understating the variance by the multiplicative factor $p$.

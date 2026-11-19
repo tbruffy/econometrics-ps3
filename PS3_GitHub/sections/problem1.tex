@@ -1,0 +1,137 @@
+\section{Instrumental variables}
+Write
+\[
+Q=E[z_i z_i'],\qquad D=E[z_i x_i'],\qquad
+S=E[\varepsilon_i^2z_i z_i'].
+\]
+The numbers of regressors and instruments are fixed. In addition to the
+assumed i.i.d.\ sampling, impose sufficient moments for the laws of large
+numbers and central limit theorem below; finite fourth moments of
+$x_i,z_i,\varepsilon_i$ suffice. For (c)--(d), assume $S$ is positive definite.
+
+\subsection*{(a) Valid instruments and consistency}
+The instruments require \emph{orthogonality}, $E[z_i\varepsilon_i]=0$,
+and \emph{relevance}, $\operatorname{rank}(D)=k$.
+Also require $Q$ to be positive definite, removing redundant instruments.
+The stronger condition $E[\varepsilon_i\mid z_i]=0$ is sufficient for
+orthogonality but is not necessary.
+
+Let
+\[
+Q_n=\frac{Z'Z}{n},\qquad D_n=\frac{Z'X}{n},\qquad
+g_n=\frac{Z'\varepsilon}{n}.
+\]
+Since $\widehat W=Z(Z'Z)^{-1}Z'X=P_ZX$, where
+$P_Z=Z(Z'Z)^{-1}Z'$ is symmetric and idempotent,
+\[
+\widehat\beta_{2SLS}
+=(X'P_ZX)^{-1}X'P_ZY.
+\]
+Substituting $Y=X\beta+\varepsilon$ gives
+\[
+\widehat\beta_{2SLS}-\beta
+=(D_n'Q_n^{-1}D_n)^{-1}D_n'Q_n^{-1}g_n.
+\]
+By the law of large numbers,
+$Q_n\xrightarrow{p}Q$, $D_n\xrightarrow{p}D$ and
+$g_n\xrightarrow{p}E[z_i\varepsilon_i]=0$.
+Since $Q$ is positive definite and $D$ has full column rank,
+$D'Q^{-1}D$ is positive definite. Thus
+\[
+\boxed{\widehat\beta_{2SLS}\xrightarrow{p}\beta.}
+\]
+
+\subsection*{(b) Asymptotic variance under heteroskedasticity}
+Let $H=D'Q^{-1}D$. Since orthogonality makes $E[z_i\varepsilon_i]=0$,
+the multivariate central limit theorem gives
+\[
+\frac1{\sqrt n}\sum_{i=1}^n z_i\varepsilon_i
+\xrightarrow{d}N(0,S),\qquad
+S=E[\sigma_i^2z_i z_i'],\quad
+\sigma_i^2=E[\varepsilon_i^2\mid z_i].
+\]
+Consequently,
+\[
+\sqrt n(\widehat\beta_{2SLS}-\beta)
+=
+H^{-1}D'Q^{-1}
+\frac1{\sqrt n}\sum_{i=1}^n z_i\varepsilon_i+o_p(1),
+\]
+so
+\[
+\boxed{
+\sqrt n(\widehat\beta_{2SLS}-\beta)\xrightarrow{d}N(0,V_{2SLS}),
+\quad
+V_{2SLS}=H^{-1}D'Q^{-1}SQ^{-1}DH^{-1}.
+}
+\]
+This is the covariance of the limiting distribution; the large-sample
+covariance of $\widehat\beta_{2SLS}$ itself is $V_{2SLS}/n$.
+
+\subsection*{(c) Residual-based minimum chi-square estimation}
+The matrix defined in the question satisfies
+\[
+\widehat S=\frac{\widehat R}{n}
+=\frac1n\sum_{i=1}^n z_i z_i'\widehat\varepsilon_i^2,
+\qquad
+\widehat\varepsilon_i
+=\varepsilon_i-x_i'(\widehat\beta_{2SLS}-\beta).
+\]
+Expanding the square gives
+\[
+\widehat S-\frac1n\sum_i z_i z_i'\varepsilon_i^2=o_p(1).
+\]
+Indeed, the difference contains terms linear and quadratic in the
+consistent estimation error $\widehat\beta_{2SLS}-\beta$,
+multiplied by sample averages that are $O_p(1)$ under the moment
+conditions. Hence $\widehat S\xrightarrow{p}S$.
+
+Holding this first-step residual weight fixed, minimization of the
+criterion in the question yields
+\[
+\widehat\beta_{MCS}
+=(X'Z\widehat R^{-1}Z'X)^{-1}X'Z\widehat R^{-1}Z'Y.
+\]
+Since $\widehat R=n\widehat S$,
+\[
+\widehat\beta_{MCS}-\beta
+=(D_n'\widehat S^{-1}D_n)^{-1}
+ D_n'\widehat S^{-1}g_n.
+\]
+The coefficient matrix converges to a finite matrix and $g_n\to_p0$,
+so $\boxed{\widehat\beta_{MCS}\xrightarrow{p}\beta}$.
+Furthermore,
+\[
+\sqrt n(\widehat\beta_{MCS}-\beta)
+=(D'S^{-1}D)^{-1}D'S^{-1}
+\frac1{\sqrt n}\sum_{i=1}^n z_i\varepsilon_i+o_p(1).
+\]
+Thus
+\[
+\boxed{
+\sqrt n(\widehat\beta_{MCS}-\beta)\xrightarrow{d}N(0,V_{MCS}),
+\qquad V_{MCS}=(D'S^{-1}D)^{-1}.
+}
+\]
+
+\subsection*{(d) Efficiency comparison}
+Define the two asymptotic influence matrices
+\[
+B_Q=(D'Q^{-1}D)^{-1}D'Q^{-1},\qquad
+B_*=(D'S^{-1}D)^{-1}D'S^{-1}.
+\]
+Both satisfy $B_QD=B_*D=I_k$. Let $\Delta=B_Q-B_*$, so $\Delta D=0$.
+Also $SB_*'=D(D'S^{-1}D)^{-1}$, which implies
+$\Delta SB_*'=0$. Expanding $B_Q=B_*+\Delta$ therefore gives
+\[
+\begin{aligned}
+V_{2SLS}-V_{MCS}
+&=B_QSB_Q'-B_*SB_*'\\
+&=\Delta S\Delta'\succeq0.
+\end{aligned}
+\]
+For every $a\in\mathbb R^k$,
+$a'V_{MCS}a\leq a'V_{2SLS}a$: MCS is asymptotically at least as
+efficient as 2SLS. The dominance is weak; heteroskedasticity alone
+does not guarantee strict improvement. Equality holds when
+$B_Q=B_*$, including the homoskedastic case $S=\sigma^2Q$.

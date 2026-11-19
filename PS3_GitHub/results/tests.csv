@@ -1,0 +1,8 @@
+test,statistic,reference,numerator_df,denominator_df,p_value
+AR4 extra lags,8.409996895528488,F,3,211.0,2.6364145736177013e-05
+AR4 extra lags HC0,20.670588643067955,chi-square,3,,0.00012323031022937417
+First-stage excluded instruments,2.5091152209020198,F,4,209.0,0.04303997151918799
+First-stage excluded instruments HC0,12.832404854053895,chi-square,4,,0.012124400300302549
+Exogeneity DWH HC0,1.139904206268222,chi-square,1,,0.2856725701228867
+Overidentification Hansen J,5.0870169987557645,chi-square,3,,0.1655351032054021
+2SLS slope equals one,7.727670899962091,chi-square,1,,0.0054380853839224265

@@ -1,0 +1,159 @@
+\section{Consumption and the permanent-income hypothesis}
+
+\subsection*{(a) Testing the additional consumption lags}
+Construct quarterly real consumption per capita as
+\[
+C_t=\frac{\text{real nondurables}_t+\text{real services}_t}
+{\text{population}_t}.
+\]
+The two consumption components are already real, so no further CPI
+deflation is applied. The data contain 220 quarters, 1948Q1--2002Q4.
+Losing four initial observations leaves $n=216$, from 1949Q1 to 2002Q4.
+OLS estimation of
+\[
+C_t=\beta_0+\beta_1C_{t-1}+\beta_2C_{t-2}
++\beta_3C_{t-3}+\beta_4C_{t-4}+\varepsilon_t
+\]
+gives the estimates in Table~\ref{tab:ar}.
+\begin{table}[H]
+\centering
+\caption{Consumption in levels: four autoregressive lags}
+\label{tab:ar}
+\input{tables/consumption_ar}
+\end{table}
+For $H_0:\beta_2=\beta_3=\beta_4=0$, the usual restricted-versus-unrestricted
+test is
+\[
+F=\frac{(SSR_R-SSR_U)/3}{SSR_U/(216-5)}
+=8.409997,\qquad F_{3,211}\text{ p-value}=0.00002636.
+\]
+We reject at $5\%$: the additional lags have joint predictive power,
+contrary to the restriction implied by Hall's hypothesis in this model.
+The heteroskedasticity-robust HC0 Wald test agrees:
+$\chi^2_3=20.670589$, with $p=0.00012323$.
+
+\subsection*{(b) Why current income growth is endogenous}
+Let $\Delta C_t=C_t-C_{t-1}$ and $\Delta Y_t=Y_t-Y_{t-1}$.
+In
+\[
+\Delta C_t=\gamma_0+\gamma_1\Delta Y_t+\varepsilon_t,
+\]
+the error includes news about permanent income. Such news can also affect
+current income, so generally
+$\operatorname{Cov}(\Delta Y_t,\varepsilon_t)\ne0$.
+With a constant and suitable laws of large numbers,
+\[
+\operatorname{plim}\widehat\gamma_{1,OLS}
+=\gamma_1+
+\frac{\operatorname{Cov}(\Delta Y_t,\varepsilon_t)}
+{\operatorname{Var}(\Delta Y_t)}.
+\]
+Thus OLS is generally inconsistent. The direction of the bias depends
+on the covariance; it does not follow from the model alone.
+
+\subsection*{(c) Two-stage least squares in log changes}
+Define
+\[
+c_t=\log C_t,\qquad
+y_t=\log\!\left(
+\frac{\text{real disposable income}_t}{\text{population}_t}
+\right).
+\]
+Estimate $\Delta c_t=\gamma_0+\gamma_1\Delta y_t+\varepsilon_t$
+using the instrument vector
+\[
+z_t=(1,\Delta c_{t-2},\Delta c_{t-3},
+             \Delta c_{t-4},\Delta c_{t-5})'.
+\]
+For example, $\Delta c_{t-2}=\log(C_{t-2}/C_{t-3})$,
+so the oldest required level is $C_{t-6}$.
+The resulting sample has $n=214$ observations, 1949Q3--2002Q4.
+
+Let $X$ contain a constant and $\Delta y_t$, let $Z$ contain the five
+instruments, and let $\widehat X=P_ZX$.
+The estimator and White HC0 covariance matrix are
+\[
+\widehat\gamma=(X'P_ZX)^{-1}X'P_Z\Delta c,\qquad
+\widehat{\operatorname{Var}}_{HC0}(\widehat\gamma)
+=(\widehat X'\widehat X)^{-1}
+\widehat X'\operatorname{diag}(\widehat\varepsilon_t^2)\widehat X
+(\widehat X'\widehat X)^{-1}.
+\]
+Here the residuals are the structural residuals
+$\widehat\varepsilon=\Delta c-X\widehat\gamma$.
+No degrees-of-freedom correction is applied.
+\begin{table}[H]
+\centering
+\caption{Consumption growth on current income growth, $n=214$}
+\label{tab:iv}
+\input{tables/consumption_iv}
+\end{table}
+The IV slope is $0.436924$ (White SE $0.202555$).
+A one-percentage-point increase in income growth is associated with
+approximately $0.437$ percentage points more consumption growth.
+The usual asymptotic two-sided test of a zero slope gives $p=0.0310$.
+The $95\%$ normal confidence interval is $[0.0399,0.8339]$.
+The estimate is consistent with an economically relevant response
+to current income. In the stylized Campbell--Mankiw interpretation,
+it suggests a substantial rule-of-thumb component; identifying the
+log-regression coefficient literally with a population fraction requires
+additional aggregation and scaling assumptions.
+
+Instrument relevance is limited: the conventional first-stage test
+of the four excluded instruments gives $F_{4,209}=2.509115$
+(first-stage $R^2=0.045821$).
+The HC0 excluded-instrument Wald statistic is $\chi^2_4=12.832405$.
+This weak first stage makes the conventional IV normal approximation
+and the specification tests below less reliable and potentially low-powered.
+
+\clearpage
+\subsection*{(d) Exogeneity and overidentifying restrictions}
+For exogeneity, first regress $\Delta y_t$ on $z_t$ and obtain
+$\widehat v_t$. Then estimate
+\[
+\Delta c_t=\gamma_0+\gamma_1\Delta y_t+\rho\widehat v_t+u_t.
+\]
+Under valid instruments, testing $\rho=0$ is a regression-form
+Durbin--Wu--Hausman test of income-growth exogeneity.
+The HC0 estimate is $\widehat\rho=-0.206732$ with SE $0.193630$.
+The robust Wald statistic is
+\[
+W=\frac{\widehat\rho^2}{\widehat{\operatorname{Var}}_{HC0}(\widehat\rho)}
+=1.139904,\qquad p=0.285673\quad(\chi^2_1).
+\]
+We do not reject exogeneity at $5\%$.
+
+For overidentification, use a heteroskedasticity-robust Hansen test.
+Starting with the 2SLS residuals from (c), form
+\[
+\widehat S=\frac1n\sum_t z_tz_t'\widehat\varepsilon_t^2,\qquad
+\bar g(\gamma)=\frac1n Z'(\Delta c-X\gamma).
+\]
+Re-estimate by minimizing
+\[
+\bar g(\gamma)'\widehat S^{-1}\bar g(\gamma).
+\]
+The two-step efficient GMM estimate is
+$\widehat\gamma_{GMM}=(0.00309653,0.35328490)'$.
+The minimized criterion gives
+\[
+J=n\bar g(\widehat\gamma_{GMM})'\widehat S^{-1}
+\bar g(\widehat\gamma_{GMM})
+=5.087017,\qquad p=0.165535\quad(\chi^2_{5-2}).
+\]
+We do not reject the three overidentifying restrictions.
+Re-estimation matters: evaluating this robust criterion at an
+inefficient 2SLS estimate does not generally yield the usual
+$\chi^2_3$ Hansen test.
+\begin{table}[H]
+\centering
+\caption{Main specification tests}
+\label{tab:tests}
+\input{tables/consumption_tests}
+\end{table}
+Failure to reject does not establish exogeneity or instrument validity,
+particularly with the weak first stage.
+White's covariance estimator follows the requested method; its
+large-sample calibration assumes the moment errors have no remaining
+serial correlation. If that condition fails, a HAC covariance estimator
+would be required.

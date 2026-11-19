@@ -1,0 +1,58 @@
+\section{A one-sided likelihood ratio test}
+Here $n_m=n_w=100$, $\sigma^2=100$, and
+$D=\bar Y_m-\bar Y_w=1$.
+The unrestricted MLEs are
+$\widehat\beta_m=64$ and $\widehat\beta_w=63$.
+
+\subsection*{(a) Likelihood ratio statistic}
+The unrestricted estimates violate $H_0:\beta_m\leq\beta_w$,
+so the constrained maximum is on the boundary
+$\beta_m=\beta_w$. Its common mean is the pooled mean,
+\[
+\widetilde\beta_m=\widetilde\beta_w
+=\frac{100(64)+100(63)}{200}=63.5.
+\]
+Relative to the unrestricted maximum, the residual sum of squares
+increases by
+\[
+100(64-63.5)^2+100(63-63.5)^2=50.
+\]
+Writing $\Lambda=\sup_{H_0}L/\sup L$, we obtain
+\[
+\boxed{\Lambda=e^{-50/(2\cdot100)}=e^{-1/4},
+\qquad LR=-2\log\Lambda=\frac{50}{100}=0.5.}
+\]
+
+\subsection*{(b) Decision at the $5\%$ level}
+The standardized mean difference is
+\[
+Z=\frac{\bar Y_m-\bar Y_w}
+{\sigma\sqrt{1/n_m+1/n_w}}
+=\frac1{\sqrt2}\approx0.707107.
+\]
+In general, the inequality-constrained statistic is
+$LR=\{\max(Z,0)\}^2$.
+At the least favorable null boundary $\beta_m=\beta_w$,
+$Z\sim N(0,1)$ exactly, giving
+\[
+LR\sim\frac12\chi_0^2+\frac12\chi_1^2,
+\]
+where $\chi_0^2$ is a point mass at zero.
+The exact $5\%$ critical value is
+\[
+z_{0.95}^2=\chi^2_{1,0.90}\approx2.70554.
+\]
+Since $0.5<2.70554$, we \textbf{do not reject}
+$H_0:\beta_m\leq\beta_w$.
+This boundary calibration controls size throughout the composite
+null, since negative values of $\beta_m-\beta_w$ reduce the
+upper-tail rejection probability.
+
+\subsection*{(c) The p-value}
+For the observed positive contrast, the least favorable null p-value is
+\[
+\boxed{p=1-\Phi(1/\sqrt2)
+=\tfrac12\Pr(\chi_1^2\geq0.5)\approx0.239750.}
+\]
+The mixture calibration is exact here because the two sample means
+are normal and the common variance is known.

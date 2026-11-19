@@ -1,0 +1,222 @@
+{
+  "conventions": {
+    "consumption": "(real nondurables + real services) / population",
+    "income": "real disposable income / population",
+    "levels_units": "Unscaled ratios of workbook source units",
+    "white_covariance": "HC0; no degrees-of-freedom adjustment",
+    "iv_instruments": [
+      "constant",
+      "instrument_dlog_consumption_lag2",
+      "instrument_dlog_consumption_lag3",
+      "instrument_dlog_consumption_lag4",
+      "instrument_dlog_consumption_lag5"
+    ],
+    "time_series_inference": "White HC0, without HAC correction",
+    "hansen": "Two-step GMM; uncentered S from 2SLS residuals"
+  },
+  "data": {
+    "consumption_observations": 220,
+    "consumption_start": "1948Q1",
+    "consumption_end": "2002Q4",
+    "source_sha256": {
+      "PS4data.xls": "572474bdac37d4daa5bcb89594ce3cf15f3dabff1f60fabe9da746998ab4bb92",
+      "SP500Index.xlsx": "3cf53d624df90ef24c78de9e89e6a9e3bc0c5dee2ea28c157a0d1cc1cc512297"
+    }
+  },
+  "ar4": {
+    "terms": [
+      "Intercept",
+      "consumption_lag1",
+      "consumption_lag2",
+      "consumption_lag3",
+      "consumption_lag4"
+    ],
+    "coefficients": [
+      2.4385278802237513e-05,
+      1.1923345968027395,
+      -0.12813372130167977,
+      0.1443290964704822,
+      -0.20746360268964636
+    ],
+    "standard_errors": [
+      1.924638051387759e-05,
+      0.06737829840906723,
+      0.10570092233947878,
+      0.10548902704095497,
+      0.06752998788225507
+    ],
+    "standard_errors_hc0": [
+      1.9401448727906818e-05,
+      0.06787281160884452,
+      0.10207128936687908,
+      0.10738439975284071,
+      0.07359266137319975
+    ],
+    "n": 216,
+    "residual_df": 211,
+    "r_squared": 0.9997482074449698,
+    "start": "1949Q1",
+    "end": "2002Q4",
+    "extra_lags_F": 8.409996895528488,
+    "extra_lags_F_df": [
+      3,
+      211
+    ],
+    "extra_lags_F_p": 2.6364145736177013e-05,
+    "extra_lags_hc0_Wald": 20.670588643067955,
+    "extra_lags_hc0_Wald_df": 3,
+    "extra_lags_hc0_Wald_p": 0.00012323031022937417
+  },
+  "ols_same_sample": {
+    "terms": [
+      "Intercept",
+      "dlog_income"
+    ],
+    "coefficients": [
+      0.0036533402654875357,
+      0.23966527479741248
+    ],
+    "standard_errors": [
+      0.00035782470819452556,
+      0.031695595116145704
+    ],
+    "standard_errors_hc0": [
+      0.0003965031204702592,
+      0.04178368420913453
+    ],
+    "n": 214,
+    "residual_df": 212,
+    "r_squared": 0.21241068542955932
+  },
+  "iv_2sls": {
+    "terms": [
+      "Intercept",
+      "dlog_income"
+    ],
+    "coefficients": [
+      0.00261294807879886,
+      0.4369245028024462
+    ],
+    "standard_errors_hc0": [
+      0.001157263190103466,
+      0.20255469764371684
+    ],
+    "covariance_hc0": [
+      [
+        1.3392580911684509e-06,
+        -0.00022404145890959228
+      ],
+      [
+        -0.00022404145890959228,
+        0.041028405537537546
+      ]
+    ],
+    "normal_z": [
+      2.2578684789630676,
+      2.1570692157975704
+    ],
+    "normal_p": [
+      0.02395386031870974,
+      0.031000271784702063
+    ],
+    "confidence_interval_95": [
+      [
+        0.00034475390556213716,
+        0.004881142252035583
+      ],
+      [
+        0.03992459052136105,
+        0.8339244150835314
+      ]
+    ],
+    "n": 214,
+    "start": "1949Q3",
+    "end": "2002Q4",
+    "slope_equals_one_Wald": 7.727670899962091,
+    "slope_equals_one_p": 0.0054380853839224265
+  },
+  "first_stage": {
+    "terms": [
+      "Intercept",
+      "instrument_dlog_consumption_lag2",
+      "instrument_dlog_consumption_lag3",
+      "instrument_dlog_consumption_lag4",
+      "instrument_dlog_consumption_lag5"
+    ],
+    "coefficients": [
+      0.003957170084971488,
+      -0.018591477836543358,
+      0.337210579691196,
+      0.17037683333356832,
+      -0.22186175934681127
+    ],
+    "standard_errors": [
+      0.001209870181452949,
+      0.13588241007460605,
+      0.13677713880661896,
+      0.1363402640216122,
+      0.13518649327367532
+    ],
+    "standard_errors_hc0": [
+      0.0016442724108737745,
+      0.1935654660793614,
+      0.11483036331107102,
+      0.11777507230962966,
+      0.16052874762494093
+    ],
+    "n": 214,
+    "residual_df": 209,
+    "r_squared": 0.045820959867231004,
+    "excluded_F": 2.5091152209020198,
+    "excluded_F_df": [
+      4,
+      209
+    ],
+    "excluded_F_p": 0.04303997151918799,
+    "excluded_hc0_Wald": 12.832404854053895,
+    "excluded_hc0_Wald_df": 4,
+    "excluded_hc0_Wald_p": 0.012124400300302549,
+    "excluded_hc0_Wald_divided_by_four": 3.2081012135134737
+  },
+  "endogeneity_test": {
+    "method": "HC0 residual-inclusion Durbin-Wu-Hausman",
+    "residual_coefficient": -0.20673188123853403,
+    "residual_standard_error_hc0": 0.19363028227705806,
+    "statistic": 1.139904206268222,
+    "reference": "chi-square",
+    "df": 1,
+    "p": 0.2856725701228867
+  },
+  "overidentification_test": {
+    "method": "Two-step efficient GMM Hansen J",
+    "gmm_coefficients": [
+      0.003096532589445636,
+      0.35328490364639054
+    ],
+    "statistic": 5.0870169987557645,
+    "reference": "chi-square",
+    "df": 3,
+    "p": 0.1655351032054021
+  },
+  "sp500": {
+    "level_observations": 702,
+    "increments_T": 701,
+    "first_date": "1960-01-29",
+    "last_date": "2018-06-29",
+    "first_index": 55.61,
+    "last_index": 2718.37,
+    "drift_ml": 0.0055483946843849176,
+    "variance_ml": 0.0017791815949153166,
+    "volatility_ml": 0.04218034607391595,
+    "monthly_geometric_price_growth": 0.00556381553329878,
+    "annual_geometric_price_growth": 0.06884725527097323,
+    "annualized_volatility": 0.14611700496172167,
+    "dividends": "Excluded by the course source"
+  },
+  "software": {
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "scipy": "1.18.1",
+    "statsmodels": "0.15.0"
+  }
+}
