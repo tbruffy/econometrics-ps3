@@ -1,27 +1,8 @@
 {
-  "conventions": {
-    "consumption": "(real nondurables + real services) / population",
-    "income": "real disposable income / population",
-    "levels_units": "Unscaled ratios of workbook source units",
-    "white_covariance": "HC0; no degrees-of-freedom adjustment",
-    "iv_instruments": [
-      "constant",
-      "instrument_dlog_consumption_lag2",
-      "instrument_dlog_consumption_lag3",
-      "instrument_dlog_consumption_lag4",
-      "instrument_dlog_consumption_lag5"
-    ],
-    "time_series_inference": "White HC0, without HAC correction",
-    "hansen": "Two-step GMM; uncentered S from 2SLS residuals"
-  },
   "data": {
     "consumption_observations": 220,
     "consumption_start": "1948Q1",
-    "consumption_end": "2002Q4",
-    "source_sha256": {
-      "PS4data.xls": "572474bdac37d4daa5bcb89594ce3cf15f3dabff1f60fabe9da746998ab4bb92",
-      "SP500Index.xlsx": "3cf53d624df90ef24c78de9e89e6a9e3bc0c5dee2ea28c157a0d1cc1cc512297"
-    }
+    "consumption_end": "2002Q4"
   },
   "ar4": {
     "terms": [
@@ -211,12 +192,6 @@
     "monthly_geometric_price_growth": 0.00556381553329878,
     "annual_geometric_price_growth": 0.06884725527097323,
     "annualized_volatility": 0.14611700496172167,
-    "dividends": "Excluded by the course source"
-  },
-  "software": {
-    "numpy": "2.3.5",
-    "pandas": "2.2.3",
-    "scipy": "1.18.1",
-    "statsmodels": "0.15.0"
+    "dividends": "Excluded"
   }
 }

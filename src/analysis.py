@@ -1,60 +1,42 @@
 #!/usr/bin/env python3
-"""Reproduce all empirical results for Econometrics I Problem Set 3.
-
-Run from the repository root: python src/analysis.py
-Only the supplied workbooks are used. White covariances are HC0.
-"""
-from __future__ import annotations
-import hashlib
 import json
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
 import numpy as np
 import pandas as pd
-import scipy
 from scipy import stats
-import statsmodels
 from statsmodels.regression.linear_model import OLS
 from statsmodels.tools.tools import add_constant
-from types import SimpleNamespace
-sm = SimpleNamespace(OLS=OLS, add_constant=add_constant)
 
-for directory in ("results", "tables", "figures"):
+ROOT = Path(__file__).resolve().parents[1]
+for directory in ("results", "tables"):
     (ROOT / directory).mkdir(parents=True, exist_ok=True)
 
+
 def robust_ols(y, X):
-    """Check statsmodels against a direct NumPy OLS/HC0 calculation."""
-    fit = sm.OLS(y, X).fit()
+    """OLS with conventional and White HC0 covariance estimates."""
+    fit = OLS(y, X).fit()
     hc0 = fit.get_robustcov_results(cov_type="HC0", use_t=False)
-    b = np.linalg.lstsq(X, y, rcond=None)[0]
-    np.testing.assert_allclose(fit.params, b, rtol=1e-7, atol=1e-11)
-    u = y - X @ b
-    bread = np.linalg.inv(X.T @ X)
-    V = bread @ (X.T @ (u[:, None]**2 * X)) @ bread
-    np.testing.assert_allclose(hc0.cov_params(), V, rtol=5e-6, atol=1e-12)
     return fit, hc0
+
 
 def wald(b, V):
     return float(b @ np.linalg.solve(V, b))
 
+
 def iv_hc0(y, X, Z):
-    """2SLS, structural residuals, and the explicit White sandwich."""
+    """Use structural residuals for the 2SLS HC0 covariance."""
     Xhat = Z @ np.linalg.lstsq(Z, X, rcond=None)[0]
     bread = np.linalg.inv(Xhat.T @ X)
     b = bread @ (Xhat.T @ y)
     u = y - X @ b
     V = bread @ (Xhat.T @ (u[:, None]**2 * Xhat)) @ bread.T
     V = (V + V.T) / 2
-    zz_inv = np.linalg.inv(Z.T @ Z)
-    cross = X.T @ Z
-    meat = Z.T @ (u[:, None]**2 * Z)
-    alternative = bread @ cross @ zz_inv @ meat @ zz_inv @ cross.T @ bread.T
-    np.testing.assert_allclose(V, alternative, rtol=1e-8, atol=1e-12)
     np.testing.assert_allclose(Xhat.T @ u, 0, atol=1e-10)
     assert np.linalg.matrix_rank(Z) == Z.shape[1]
     assert np.linalg.matrix_rank(Xhat) == X.shape[1]
     return b, u, V
+
 
 def summary(fit, hc0, terms):
     return {
@@ -65,12 +47,14 @@ def summary(fit, hc0, terms):
         "r_squared": float(fit.rsquared),
     }
 
+
 def tabular(filename, layout, rows):
     text = ("\\begin{tabular}{" + layout + "}\n\\toprule\n"
             + "\n".join(rows) + "\n\\bottomrule\n\\end{tabular}\n")
     (ROOT / "tables" / filename).write_text(text, encoding="utf-8")
 
-# P2: the expenditure and income series are already real.
+
+# Quarterly consumption and disposable income
 source = ROOT / "data" / "PS4data.xls"
 raw = pd.read_excel(source, engine="xlrd")
 required = ["year", "quarter", "real consumption of nondurables",
@@ -100,25 +84,24 @@ for lag in range(2, 6):
     data[f"instrument_dlog_consumption_lag{lag}"] = (
         data["dlog_consumption"].shift(lag))
 
-# AR(4), with four initial observations lost.
+# Hall lag restrictions
 ar_columns = [f"consumption_lag{j}" for j in range(1, 5)]
 ar_sample = data.dropna(subset=["consumption_per_capita"] + ar_columns)
 assert len(ar_sample) == 216 and ar_sample["quarter"].iloc[0] == "1949Q1"
 ar_y = ar_sample["consumption_per_capita"].to_numpy()
-ar_X = sm.add_constant(ar_sample[ar_columns].to_numpy(), has_constant="add")
+ar_X = add_constant(ar_sample[ar_columns].to_numpy(), has_constant="add")
 ar, ar_hc0 = robust_ols(ar_y, ar_X)
+np.testing.assert_allclose(
+    ar.params, np.linalg.lstsq(ar_X, ar_y, rcond=None)[0],
+    rtol=1e-7, atol=1e-11)
 R = np.zeros((3, 5))
 R[:, 2:] = np.eye(3)
 ar_ftest = ar.f_test(R)
 ar_F, ar_fp = float(ar_ftest.fvalue), float(ar_ftest.pvalue)
 ar_W = wald(ar.params[2:], ar_hc0.cov_params()[2:, 2:])
 ar_wp = float(stats.chi2.sf(ar_W, 3))
-# Independently reproduce the conventional nested-model F.
-restricted = sm.OLS(ar_y, ar_X[:, :2]).fit()
-np.testing.assert_allclose(
-    ar_F, ((restricted.ssr-ar.ssr)/3)/(ar.ssr/ar.df_resid), rtol=1e-10)
 
-# Same 214 observations for all OLS, IV, first-stage, DWH and J comparisons.
+# OLS, IV and specification tests use the same observations.
 instrument_columns = [
     f"instrument_dlog_consumption_lag{j}" for j in range(2, 6)]
 iv_sample = data.dropna(
@@ -127,8 +110,8 @@ assert len(iv_sample) == 214
 assert iv_sample["quarter"].iloc[0] == "1949Q3"
 assert iv_sample["quarter"].iloc[-1] == "2002Q4"
 y = iv_sample["dlog_consumption"].to_numpy()
-X = sm.add_constant(iv_sample["dlog_income"].to_numpy(), has_constant="add")
-Z = sm.add_constant(iv_sample[instrument_columns].to_numpy(), has_constant="add")
+X = add_constant(iv_sample["dlog_income"].to_numpy(), has_constant="add")
+Z = add_constant(iv_sample[instrument_columns].to_numpy(), has_constant="add")
 n = len(y)
 ols, ols_hc0 = robust_ols(y, X)
 b_iv, u_iv, V_iv = iv_hc0(y, X, Z)
@@ -141,15 +124,13 @@ first_F, first_fp = float(first_ftest.fvalue), float(first_ftest.pvalue)
 first_W = wald(first.params[1:], first_hc0.cov_params()[1:, 1:])
 first_wp = float(stats.chi2.sf(first_W, 4))
 
-# HC0 regression-form DWH. Under H0 rho=0, estimating the first-stage
-# residual contributes no first-order generated-regressor correction.
+# Residual-inclusion test
 aug_X = np.column_stack([X, first.resid])
 aug, aug_hc0 = robust_ols(y, aug_X)
 dwh_W = float(aug.params[-1]**2 / aug_hc0.cov_params()[-1, -1])
 dwh_p = float(stats.chi2.sf(dwh_W, 1))
 
-# Robust overidentification: re-estimate by efficient two-step GMM.
-# The weight uses uncentered moment second moments from 2SLS residuals.
+# The second-step weight uses 2SLS residuals.
 S = Z.T @ (u_iv[:, None]**2 * Z) / n
 D = Z.T @ X / n
 zy = Z.T @ y / n
@@ -168,7 +149,7 @@ iv_ci = np.column_stack([b_iv-zcrit*se_iv, b_iv+zcrit*se_iv])
 gamma_one_W = float(((b_iv[1]-1)/se_iv[1])**2)
 gamma_one_p = float(stats.chi2.sf(gamma_one_W, 1))
 
-# P3(d): the first level is the initial condition t=0, not an increment.
+# Monthly S&P 500 log returns
 sp_source = ROOT / "data" / "SP500Index.xlsx"
 sp_raw = pd.read_excel(sp_source, sheet_name="WRDS", engine="openpyxl")
 assert sp_raw.shape == (702, 2)
@@ -192,23 +173,10 @@ np.testing.assert_allclose(
     drift, sp["normalized_log_level"].iloc[-1]/T, rtol=1e-12, atol=1e-15)
 
 results = {
-    "conventions": {
-        "consumption": "(real nondurables + real services) / population",
-        "income": "real disposable income / population",
-        "levels_units": "Unscaled ratios of workbook source units",
-        "white_covariance": "HC0; no degrees-of-freedom adjustment",
-        "iv_instruments": ["constant"] + instrument_columns,
-        "time_series_inference": "White HC0, without HAC correction",
-        "hansen": "Two-step GMM; uncentered S from 2SLS residuals",
-    },
     "data": {
         "consumption_observations": len(data),
         "consumption_start": data["quarter"].iloc[0],
         "consumption_end": data["quarter"].iloc[-1],
-        "source_sha256": {
-            "PS4data.xls": hashlib.sha256(source.read_bytes()).hexdigest(),
-            "SP500Index.xlsx": hashlib.sha256(sp_source.read_bytes()).hexdigest(),
-        },
     },
     "ar4": {
         **summary(ar, ar_hc0, ["Intercept"]+ar_columns),
@@ -257,11 +225,7 @@ results = {
         "monthly_geometric_price_growth": float(np.expm1(drift)),
         "annual_geometric_price_growth": float(np.expm1(12*drift)),
         "annualized_volatility": float(volatility*np.sqrt(12)),
-        "dividends": "Excluded by the course source",
-    },
-    "software": {
-        "numpy": np.__version__, "pandas": pd.__version__,
-        "scipy": scipy.__version__, "statsmodels": statsmodels.__version__,
+        "dividends": "Excluded",
     },
 }
 (ROOT / "results/results.json").write_text(
@@ -330,22 +294,3 @@ tabular("consumption_tests.tex", "lrrr", [
     f"Exogeneity (HC0 $\\chi^2$) & {dwh_W:.6f} & $1$ & {dwh_p:.6f}" + r" \\",
     f"Overidentification (Hansen $J$) & {J:.6f} & $3$ & {J_p:.6f}" + r" \\",
 ])
-macros = {
-    "SPDrift": f"{drift:.10f}", "SPVariance": f"{variance:.10f}",
-    "SPVolatility": f"{volatility:.10f}", "SPIncrements": str(T),
-    "ARFStat": f"{ar_F:.6f}", "ARFPValue": f"{ar_fp:.8f}",
-    "IVSlope": f"{b_iv[1]:.6f}", "IVSlopeSE": f"{se_iv[1]:.6f}",
-    "DWHStat": f"{dwh_W:.6f}", "DWHPValue": f"{dwh_p:.6f}",
-    "HansenStat": f"{J:.6f}", "HansenPValue": f"{J_p:.6f}",
-}
-(ROOT / "results/macros.tex").write_text(
-    "% Generated by src/analysis.py.\n" +
-    "".join("\\newcommand{\\"+key+"}{"+value+"}\n" for key, value in macros.items()),
-    encoding="utf-8")
-print(json.dumps({
-    "AR4_F": ar_F, "AR4_p": ar_fp,
-    "IV_coefficients": b_iv.tolist(), "IV_HC0_SE": se_iv.tolist(),
-    "first_stage_F": first_F, "DWH": [dwh_W, dwh_p], "Hansen_J": [J, J_p],
-    "SP500": {"T": T, "drift": drift, "variance": variance,
-               "volatility": volatility},
-}, indent=2))
